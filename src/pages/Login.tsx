@@ -33,8 +33,6 @@ const LoginPage = () => {
     try {
       // ** 2 - Fulfilled => SUCCESS => (OPTIONAL)
       const { status } = await axiosInstance.post("/auth/local", data)
-      console.log(data)
-
       if(status == 200){
         toast.success("You will navigate to the home page after 4 seconds from login!", {
           position: "bottom-center",
