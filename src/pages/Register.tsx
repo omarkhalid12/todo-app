@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interfaces";
+import { Link, useNavigate } from "react-router-dom";
 
 interface IFormInput {
   username: string
@@ -18,7 +19,8 @@ interface IFormInput {
 }
 
 const RegisterPage = () => {
-  const[isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
+  const[isLoading, setIsLoading] = useState(false);
   
   const { register, handleSubmit, formState: {errors} } = useForm<IFormInput>({
     resolver: yupResolver(registerSchema)
@@ -33,15 +35,18 @@ const RegisterPage = () => {
         // ** 2 - Fulfilled => SUCCESS => (OPTIONAL)
         const { status } = await axiosInstance.post("/auth/local/register", data)
         if(status == 200){
-          toast.success("You will navigate to the login page after 4 seconds from login!", {
+          toast.success("You will navigate to the login page after 2 seconds from login!", {
             position: "bottom-center",
-            duration: 4000,
+            duration: 1500,
             style: {
               background: "black",
               color: "white",
               width: "fit-content"
             }
           })
+          setTimeout(() => {
+            navigate('/login')
+          }, 2000);
         }
       } catch (error) {
         // ** 3 - Rejected => Field => (OPTIONAL)
@@ -72,6 +77,11 @@ const RegisterPage = () => {
           Register
         </Button>
       </form>
+      <div className="my-2 text-center">
+        <span className="text-dark">have an email 
+          <Link className="text-[#194eca] ml-1 font-semibold" to={'/login'}>Login</Link>
+        </span>
+      </div>
     </div>
   );
 };

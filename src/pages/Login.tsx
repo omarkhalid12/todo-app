@@ -10,7 +10,7 @@ import axiosInstance from "../config/axios.config";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interfaces";
-
+import { Link } from "react-router-dom";
 
 interface IFormInput {
   identifier: string
@@ -18,38 +18,43 @@ interface IFormInput {
 }
 
 const LoginPage = () => {
-
   const[isLoading, setIsLoading] = useState(false)
     
-    const { register, handleSubmit, formState: {errors} } = useForm<IFormInput>({
-      resolver: yupResolver(loginSchema)
-    })
+  const { register, handleSubmit, formState: {errors} } = useForm<IFormInput>({
+    resolver: yupResolver(loginSchema)
+  })
 
-    // ** HANDLERS
-    const onSubmit: SubmitHandler<IFormInput> = async data => { 
-    // ** 1 - Pending => LOADING
-    setIsLoading(true)
-    
+  // ** HANDLERS
+  const onSubmit: SubmitHandler<IFormInput> = async data => { 
+  // ** 1 - Pending => LOADING
+  setIsLoading(true)
+  
     try {
       // ** 2 - Fulfilled => SUCCESS => (OPTIONAL)
-      const { status } = await axiosInstance.post("/auth/local", data)
+      const { status, data: resData } = await axiosInstance.post("/auth/local", data)
+      console.log(resData);
+      
       if(status == 200){
-        toast.success("You will navigate to the home page after 4 seconds from login!", {
+        toast.success("You will navigate to the home page after 2 seconds!", {
           position: "bottom-center",
-          duration: 4000,
+          duration: 1500,
           style: {
             background: "black",
             color: "white",
             width: "fit-content"
           }
         })
+        localStorage.setItem("loggedInUser", JSON.stringify(resData))
+        setTimeout(() => {
+          location.replace('/')
+        }, 2000);
       }
     } catch (error) {
       // ** 3 - Rejected => Field => (OPTIONAL)
       const errorObj = error as AxiosError<IErrorResponse>
         toast.error(`${errorObj.response?.data.error.message}`, {
           position: "bottom-center",
-          duration: 4000,
+          duration: 1500,
         })   
       } finally {
         setIsLoading(false)
@@ -73,6 +78,11 @@ const LoginPage = () => {
           Login
         </Button>
       </form>
+      <div className="my-2 text-center">
+        <span className="text-dark">don't have an email 
+          <Link className="text-[#194eca] ml-1 font-semibold" to={'/register'}>Register</Link>
+        </span>
+      </div>
     </div>
   );
 };
