@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import Button from "./ui/Button";
-import axiosInstance from "../config/axios.config";
+import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
 
 const TodoList = () => {
 
@@ -9,17 +8,13 @@ const TodoList = () => {
   const userData = userDataString ? JSON.parse(userDataString) : null;
 
   /** FETCH DATA USING REACT QUERY **/
-  const {data, isLoading} = useQuery({
-    queryKey: ["todos"],
-    queryFn: async()=> {
-      const {data} = await axiosInstance.get("/users/me?populate=todos", {
-        headers: {
-          Authorization: `Bearer ${userData.jwt}`
-        }
-      })
-      return data;
+  const {data, isLoading} = useAuthenticatedQuery({url: "/users/me?populate=todos",
+  queryKey: ["todos"], 
+  config: {
+    headers: {
+      Authorization: `Bearer ${userData.jwt}`
     }
-  })
+  }})
 
   if(isLoading) return <h3>Loading ...</h3> 
 
