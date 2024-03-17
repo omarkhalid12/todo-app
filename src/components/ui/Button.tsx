@@ -8,7 +8,7 @@ const buttonVariants = cva("bg-[#194eca] flex item-center justify-center rounded
       // ** FILLED
       default: "bg-blue-700  dark:hover:bg-indigo-700",
       danger: "bg-red-900 dark:bg-red-600 dark:text-white dark:hover:bg-red-700",
-      cancel: "bg-gray-300 text-gray-700 dark:bg-gray-500 dark:text-white hover:bg-gray-400 dark:hover:bg-gray-400",
+      cancel: "bg-gray-300 text-gray-700 dark:bg-[#f5f5fa] dark:text-dark hover:bg-gray-400 dark:hover:bg-gray-400",
 
       // ** OUTLINE
       outline:
