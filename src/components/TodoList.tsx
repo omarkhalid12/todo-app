@@ -14,10 +14,11 @@ const TodoList = () => {
   const userDataString = localStorage.getItem(storageKey)
   const userData = userDataString ? JSON.parse(userDataString) : null;
   
-  const [isOpenEditModal, setIsOpenEditModal] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [queryVersion, setQueryVersion] = useState(1);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false)
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   
   const [todoAdd, setTodoAdd] = useState({
     title: "",
@@ -31,8 +32,8 @@ const TodoList = () => {
   })
 
   /** FETCH DATA USING REACT QUERY **/
-  const {data, isLoading} = useAuthenticatedQuery({url: "/users/me?populate=todos",
-  queryKey: ["todoList", `${todoEdit.id}`], 
+  const {data, isLoading} = useAuthenticatedQuery({url:"/users/me?populate=todos",
+  queryKey: ["todoList", `${queryVersion}`], 
   config: {
     headers: {
       Authorization: `Bearer ${userData.jwt}`
@@ -102,6 +103,7 @@ const TodoList = () => {
       })
       if(status == 200) {
         closeConfirmModal()
+        setQueryVersion(prev => prev + 1)
       }
     } catch (error) {
       console.log(error)
@@ -121,6 +123,7 @@ const TodoList = () => {
       }})
       if(status == 200) {
         onCloseAddModal()
+        setQueryVersion(prev => prev + 1)
       }
     } catch (error) {
       console.log(error);
@@ -141,6 +144,7 @@ const TodoList = () => {
       }})
       if(status == 200) {
         onCloseEditModal()
+        setQueryVersion(prev => prev + 1)
       }
     } catch (error) {
       console.log(error);
