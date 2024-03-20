@@ -6,6 +6,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
+import TodoSkeleton from "./TodoSkeleton";
 
 const TodoList = () => {
 
@@ -45,8 +46,18 @@ const TodoList = () => {
     setIsOpenEditModal(true)
   }
 
-  const closeConfirmModal = ()=> setIsOpenConfirmModal(false)
-  const openConfirmModal = ()=> setIsOpenConfirmModal(true)
+  const closeConfirmModal = ()=> {
+    setTodoEdit({
+      id: 0,
+      title: "",
+      description: ""
+    })
+    setIsOpenConfirmModal(false)
+  }
+  const openConfirmModal = (todo: ITodo)=> {
+    setTodoEdit(todo)
+    setIsOpenConfirmModal(true)
+  }
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> {
     const {value, name} = event.target
@@ -55,6 +66,21 @@ const TodoList = () => {
       ...todoEdit,
       [name]: value
     })
+  }
+
+  const onRemove = async()=> {
+    try {
+      const { status } = await axiosInstance.delete(`/todos/${todoEdit.id}`, {
+        headers: {
+          Authorization: `Bearer ${userData.jwt}`
+        }
+      })
+      if(status == 200) {
+        closeConfirmModal()
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const submitHandler = async(event: FormEvent<HTMLFormElement>)=> {
@@ -78,16 +104,22 @@ const TodoList = () => {
     }
   }
 
-  if(isLoading) return <h3>Loading ...</h3> 
+  if(isLoading) return (
+    <div className="space-y-1 p-3">
+      {Array.from({length: 3}, (_, index)=> (
+        <TodoSkeleton key={index} />
+      ))}
+    </div>
+  )
 
   return (
     <div className="space-y-1 ">
       {data.todos.length ? data.todos.map((todo: ITodo) => (
         <div key={todo.id} className="flex items-center justify-between hover:bg-gray-100 duration-300 p-3 rounded-md even:bg-gray-100">
-          <p className="w-full font-semibold">1 - {todo.title}</p>
+          <p className="w-full font-semibold">{todo.id} - {todo.title}</p>
           <div className="flex items-center justify-end w-full space-x-3">
             <Button size={"sm"} onClick={()=> onOpenEditModal(todo)}>Edit</Button>
-            <Button variant={"danger"} size={"sm"} onClick={openConfirmModal}>
+            <Button variant={"danger"} size={"sm"} onClick={()=> openConfirmModal(todo)}>
               Remove
             </Button>
           </div>
@@ -114,7 +146,7 @@ const TodoList = () => {
         Please make sure this is the intended action."
       >
         <div className="flex items-center space-x-3">
-          <Button variant={"danger"} onClick={()=> {}}>
+          <Button variant={"danger"} onClick={onRemove}>
             Yes, remove
           </Button>
           <Button variant={"cancel"} onClick={closeConfirmModal}>
