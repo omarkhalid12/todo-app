@@ -17,6 +17,13 @@ const TodoList = () => {
   const [isOpenEditModal, setIsOpenEditModal] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  
+  const [todoAdd, setTodoAdd] = useState({
+    title: "",
+    description: ""
+  })
+  
   const [todoEdit, setTodoEdit] = useState<ITodo>({
     id: 0,
     title: "",
@@ -33,6 +40,16 @@ const TodoList = () => {
   }})
 
   // ** Handlers
+  const onCloseAddModal = ()=> {
+    setTodoAdd({
+      title: "",
+      description: ""
+    })
+    setIsOpenAddModal(false)
+  }
+  const onOpenAddModal = ()=> {
+    setIsOpenAddModal(true)
+  }
   const onCloseEditModal = ()=> {
     setTodoEdit({
       id: 0,
@@ -59,6 +76,14 @@ const TodoList = () => {
     setIsOpenConfirmModal(true)
   }
 
+  const onChangeAddTodoHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> {
+    const {value, name} = event.target
+
+    setTodoAdd({
+      ...todoAdd,
+      [name]: value
+    })
+  }
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> {
     const {value, name} = event.target
 
@@ -83,6 +108,26 @@ const TodoList = () => {
     }
   }
 
+  const submitAddTodoHandler = async(event: FormEvent<HTMLFormElement>)=> {
+    event.preventDefault()
+
+    setIsUpdating(true)
+
+    const {title, description} = todoAdd
+    try {
+      const { status } = await axiosInstance.post(`/todos}`, {data: title, description}, 
+      {headers: {
+        Authorization: `Bearer ${userData.jwt}`
+      }})
+      if(status == 200) {
+        onCloseAddModal()
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUpdating(false)
+    }
+  }
   const submitHandler = async(event: FormEvent<HTMLFormElement>)=> {
     event.preventDefault()
 
@@ -105,7 +150,7 @@ const TodoList = () => {
   }
 
   if(isLoading) return (
-    <div className="space-y-1 p-3">
+    <div className="p-3 space-y-1">
       {Array.from({length: 3}, (_, index)=> (
         <TodoSkeleton key={index} />
       ))}
@@ -114,8 +159,11 @@ const TodoList = () => {
 
   return (
     <div className="space-y-1 ">
+      <div className="mx-auto my-10 w-fit">
+        <Button size={"sm"} onClick={onOpenAddModal}>Post a new todo</Button>
+      </div>
       {data.todos.length ? data.todos.map((todo: ITodo) => (
-        <div key={todo.id} className="flex items-center justify-between hover:bg-gray-100 duration-300 p-3 rounded-md even:bg-gray-100">
+        <div key={todo.id} className="flex items-center justify-between p-3 duration-300 rounded-md hover:bg-gray-100 even:bg-gray-100">
           <p className="w-full font-semibold">{todo.id} - {todo.title}</p>
           <div className="flex items-center justify-end w-full space-x-3">
             <Button size={"sm"} onClick={()=> onOpenEditModal(todo)}>Edit</Button>
@@ -125,12 +173,23 @@ const TodoList = () => {
           </div>
         </div>
       )) : <h3>No todos Yet!</h3>}
+      {/* Add todo Modal */}
+      <Modal isOpen={ isOpenAddModal } closeModal={ onCloseAddModal } title="Edit this todo" >
+        <form className="space-y-3" onSubmit={submitAddTodoHandler}>
+          <Input name="title" value={todoAdd.title} onChange={onChangeAddTodoHandler}/>
+          <Textarea name="description" value={todoAdd.description} onChange={onChangeAddTodoHandler}/>
+          <div className="flex mt-4 space-x-3 item-center">
+            <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Done</Button>
+            <Button variant={"cancel"} onClick={onCloseAddModal}>Cancel</Button>
+          </div>
+        </form>
+      </Modal>
       {/* Edit todo Modal */}
       <Modal isOpen={ isOpenEditModal } closeModal={ onCloseEditModal } title="Edit this todo" >
         <form className="space-y-3" onSubmit={submitHandler}>
           <Input name="title" value={todoEdit.title} onChange={onChangeHandler}/>
           <Textarea name="description" value={todoEdit.description} onChange={onChangeHandler}/>
-          <div className="flex item-center space-x-3 mt-4">
+          <div className="flex mt-4 space-x-3 item-center">
             <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Update</Button>
             <Button variant={"cancel"}>Cancel</Button>
           </div>
