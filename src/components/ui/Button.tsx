@@ -30,12 +30,13 @@ const buttonVariants = cva("bg-[#194eca] flex item-center justify-center rounded
 
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   children: ReactNode;
-  isLoading?: boolean
+  isLoading?: boolean;
+  type?: 'submit' | 'reset' | 'button'
 }
 
-const Button = ({ variant, size, fullWidth, isLoading, className, children, ...props }: ButtonProps) => {
+const Button = ({ type, variant, size, fullWidth, isLoading, className, children, ...props }: ButtonProps) => {
   return (
-    <button className={cn(buttonVariants({ variant, size, fullWidth, className }))} {...props} disabled= {isLoading}>
+    <button type={type} className={cn(buttonVariants({ variant, size, fullWidth, className }))} {...props} disabled= {isLoading}>
       {isLoading ? 
         <svg className="w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

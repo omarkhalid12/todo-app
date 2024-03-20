@@ -1,5 +1,5 @@
 import Button from "./ui/Button";
-import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
+import useAuthenticatedQuery from "../hooks/useCustomQuery";
 import Modal from "./ui/Modal";
 import Input from "./ui/Input";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -166,25 +166,27 @@ const TodoList = () => {
       <div className="mx-auto my-10 w-fit">
         <Button size={"sm"} onClick={onOpenAddModal}>Post a new todo</Button>
       </div>
-      {data.todos.length ? data.todos.map((todo: ITodo) => (
-        <div key={todo.id} className="flex items-center justify-between p-3 duration-300 rounded-md hover:bg-gray-100 even:bg-gray-100">
-          <p className="w-full font-semibold">{todo.id} - {todo.title}</p>
-          <div className="flex items-center justify-end w-full space-x-3">
-            <Button size={"sm"} onClick={()=> onOpenEditModal(todo)}>Edit</Button>
-            <Button variant={"danger"} size={"sm"} onClick={()=> openConfirmModal(todo)}>
-              Remove
-            </Button>
+      {data.todos.length ? 
+        data.todos.map((todo: ITodo) => (
+          <div key={todo.id} className="flex items-center justify-between p-3 duration-300 rounded-md hover:bg-gray-100 even:bg-gray-100">
+            <p className="w-full font-semibold">{todo.id} - {todo.title}</p>
+            <div className="flex items-center justify-end w-full space-x-3">
+              <Button size={"sm"} onClick={()=> onOpenEditModal(todo)}>Edit</Button>
+              <Button variant={"danger"} size={"sm"} onClick={()=> openConfirmModal(todo)}>
+                Remove
+              </Button>
+            </div>
           </div>
-        </div>
-      )) : <h3>No todos Yet!</h3>}
+        )) 
+      : <h3>No todos Yet!</h3>}
       {/* Add todo Modal */}
-      <Modal isOpen={ isOpenAddModal } closeModal={ onCloseAddModal } title="Edit this todo" >
+      <Modal isOpen={ isOpenAddModal } closeModal={ onCloseAddModal } title="Add a new todo" >
         <form className="space-y-3" onSubmit={submitAddTodoHandler}>
           <Input name="title" value={todoAdd.title} onChange={onChangeAddTodoHandler}/>
           <Textarea name="description" value={todoAdd.description} onChange={onChangeAddTodoHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
             <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Done</Button>
-            <Button variant={"cancel"} onClick={onCloseAddModal}>Cancel</Button>
+            <Button variant={"cancel"} onClick={onCloseAddModal} type="button">Cancel</Button>
           </div>
         </form>
       </Modal>
@@ -195,7 +197,7 @@ const TodoList = () => {
           <Textarea name="description" value={todoEdit.description} onChange={onChangeHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
             <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Update</Button>
-            <Button variant={"cancel"}>Cancel</Button>
+            <Button variant={"cancel"} type="button">Cancel</Button>
           </div>
         </form>
       </Modal>
@@ -212,7 +214,7 @@ const TodoList = () => {
           <Button variant={"danger"} onClick={onRemove}>
             Yes, remove
           </Button>
-          <Button variant={"cancel"} onClick={closeConfirmModal}>
+          <Button variant={"cancel"} onClick={closeConfirmModal} type="button">
             Cancel
           </Button>
         </div>
