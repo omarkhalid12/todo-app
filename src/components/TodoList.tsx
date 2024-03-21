@@ -7,6 +7,7 @@ import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
 import TodoSkeleton from "./TodoSkeleton";
+import { faker } from '@faker-js/faker';
 
 const TodoList = () => {
 
@@ -94,7 +95,21 @@ const TodoList = () => {
     })
   }
 
-  const onRemove = async()=> {
+  const onGenerateTodos = async()=> {
+    // 100 record
+    for (let i = 0; i < 100; i++) {
+      try {
+        await axiosInstance.post(`/todos}`, 
+        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id]}}, 
+        {headers: {
+          Authorization: `Bearer ${userData.jwt}`
+        }})
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  const onSubmitRemoveTodo = async()=> {
     try {
       const { status } = await axiosInstance.delete(`/todos/${todoEdit.id}`, {
         headers: {
@@ -110,14 +125,15 @@ const TodoList = () => {
     }
   }
 
-  const submitAddTodoHandler = async(event: FormEvent<HTMLFormElement>)=> {
+  const onSubmitAddTodo = async(event: FormEvent<HTMLFormElement>)=> {
     event.preventDefault()
 
     setIsUpdating(true)
 
     const {title, description} = todoAdd
     try {
-      const { status } = await axiosInstance.post(`/todos}`, {data: title, description}, 
+      const { status } = await axiosInstance.post(`/todos}`, 
+      {data: title, description, user: [userData.user.id]}, 
       {headers: {
         Authorization: `Bearer ${userData.jwt}`
       }})
@@ -164,7 +180,22 @@ const TodoList = () => {
   return (
     <div className="space-y-1 ">
       <div className="mx-auto my-10 w-fit">
-        <Button size={"sm"} onClick={onOpenAddModal}>Post a new todo</Button>
+        {isLoading ? (
+          <div className="flex space-x-2 item-center">
+            <div className="w-20 bg-gray-300 rounded-md h-9 dark:bg-gray-400"></div>
+            <div className="w-20 bg-gray-300 rounded-md h-9 dark:bg-gray-400"></div>
+          </div>
+        ) : (
+          <div className="flex space-x-2 item-center">
+            <Button size={"sm"} onClick={onOpenAddModal}>
+              Post a new todo
+            </Button>
+            <Button size={"sm"} variant={"outline"} onClick={onGenerateTodos}>
+              Generate todos
+            </Button>
+          </div>
+          
+        )}
       </div>
       {data.todos.length ? 
         data.todos.map((todo: ITodo) => (
@@ -181,7 +212,7 @@ const TodoList = () => {
       : <h3>No todos Yet!</h3>}
       {/* Add todo Modal */}
       <Modal isOpen={ isOpenAddModal } closeModal={ onCloseAddModal } title="Add a new todo" >
-        <form className="space-y-3" onSubmit={submitAddTodoHandler}>
+        <form className="space-y-3" onSubmit={onSubmitAddTodo}>
           <Input name="title" value={todoAdd.title} onChange={onChangeAddTodoHandler}/>
           <Textarea name="description" value={todoAdd.description} onChange={onChangeAddTodoHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
@@ -211,7 +242,7 @@ const TodoList = () => {
         Please make sure this is the intended action."
       >
         <div className="flex items-center space-x-3">
-          <Button variant={"danger"} onClick={onRemove}>
+          <Button variant={"danger"} onClick={onSubmitRemoveTodo}>
             Yes, remove
           </Button>
           <Button variant={"cancel"} onClick={closeConfirmModal} type="button">
