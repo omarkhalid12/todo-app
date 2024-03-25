@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
-import InputErrorMessage from "../components/ui/InputErrorMessage";
+import InputErrorMessage from "../components/InputErrorMessage";
 import { REGISTER_FORM } from "../data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../validation";
@@ -33,7 +33,7 @@ const RegisterPage = () => {
       try {
         // ** 2 - Fulfilled => SUCCESS => (OPTIONAL)
         const { status } = await axiosInstance.post("/auth/local/register", data)
-        if(status === 200){
+        if(status == 200){
           toast.success("You will navigate to the login page after 2 seconds from login!", {
             position: "bottom-center",
             duration: 1500,
@@ -50,8 +50,7 @@ const RegisterPage = () => {
       } catch (error) {
         // ** 3 - Rejected => Field => (OPTIONAL)
         const errorObj = error as AxiosError<IErrorResponse>
-          toast.error(`${errorObj.response?
-          .data.error.message}`, {
+          toast.error(`${errorObj.response?.data.error.message}`, {
             position: "bottom-center",
             duration: 4000,
           })   

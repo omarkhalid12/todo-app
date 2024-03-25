@@ -34,13 +34,15 @@ const TodoList = () => {
 
   /** FETCH DATA USING REACT QUERY **/
   const {data, isLoading} = useCustomQuery({
-  url:"users/me?populate=todos",
-  queryKey: ["todoList", `${queryVersion}`], 
-  config: {
-    headers: {
-      Authorization: `Bearer ${userData.jwt}`
+    queryKey: ["todoList", `${queryVersion}`],
+    url:"users/me?populate=todos",
+      config: {
+        headers: {
+          Authorization: `Bearer ${userData.jwt}`
+        },
+      }
     }
-  }})
+  )
 
   // ** Handlers
   const onCloseAddModal = ()=> {
@@ -101,10 +103,12 @@ const TodoList = () => {
     for (let i = 0; i < 100; i++) {
       try {
         await axiosInstance.post(`/todos`, 
-        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id]},}, 
-        {headers: {
-          Authorization: `Bearer ${userData.jwt}`
-        }})
+        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id] } }, 
+          {headers: {
+            Authorization: `Bearer ${userData.jwt}`
+          },
+        }
+      );
       } catch (error) {
         console.log(error);
       }

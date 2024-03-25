@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
-import InputErrorMessage from "../components/ui/InputErrorMessage";
+import InputErrorMessage from "../components/InputErrorMessage";
 import { LOGIN_FORM } from "../data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
