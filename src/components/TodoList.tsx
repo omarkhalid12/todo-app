@@ -1,5 +1,5 @@
 import Button from "./ui/Button";
-import useAuthenticatedQuery from "../hooks/useCustomQuery";
+import useCustomQuery from "../hooks/useCustomQuery";
 import Modal from "./ui/Modal";
 import Input from "./ui/Input";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -18,7 +18,7 @@ const TodoList = () => {
   const [queryVersion, setQueryVersion] = useState(1);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false)
-  const [isOpenEditModal, setIsOpenEditModal] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   
   const [todoAdd, setTodoAdd] = useState({
@@ -33,7 +33,8 @@ const TodoList = () => {
   })
 
   /** FETCH DATA USING REACT QUERY **/
-  const {data, isLoading} = useAuthenticatedQuery({url:"/users/me?populate=todos",
+  const {data, isLoading} = useCustomQuery({
+  url:"users/me?populate=todos",
   queryKey: ["todoList", `${queryVersion}`], 
   config: {
     headers: {
@@ -58,11 +59,11 @@ const TodoList = () => {
       title: "",
       description: ""
     })
-    setIsOpenEditModal(false)
+    setIsEditModalOpen(false)
   }
   const onOpenEditModal = (todo: ITodo)=> {
     setTodoEdit(todo)
-    setIsOpenEditModal(true)
+    setIsEditModalOpen(true)
   }
 
   const closeConfirmModal = ()=> {
@@ -99,8 +100,8 @@ const TodoList = () => {
     // 100 record
     for (let i = 0; i < 100; i++) {
       try {
-        await axiosInstance.post(`/todos}`, 
-        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id]}}, 
+        await axiosInstance.post(`/todos`, 
+        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id]},}, 
         {headers: {
           Authorization: `Bearer ${userData.jwt}`
         }})
@@ -116,7 +117,7 @@ const TodoList = () => {
           Authorization: `Bearer ${userData.jwt}`
         }
       })
-      if(status == 200) {
+      if(status === 200) {
         closeConfirmModal()
         setQueryVersion(prev => prev + 1)
       }
@@ -137,7 +138,7 @@ const TodoList = () => {
       {headers: {
         Authorization: `Bearer ${userData.jwt}`
       }})
-      if(status == 200) {
+      if(status === 200) {
         onCloseAddModal()
         setQueryVersion(prev => prev + 1)
       }
@@ -147,18 +148,17 @@ const TodoList = () => {
       setIsUpdating(false)
     }
   }
-  const submitHandler = async(event: FormEvent<HTMLFormElement>)=> {
+  const onSubmitHandler = async(event: FormEvent<HTMLFormElement>)=> {
     event.preventDefault()
-
     setIsUpdating(true)
-
     const {title, description} = todoEdit
+
     try {
-      const { status } = await axiosInstance.put(`/todos/${todoEdit.id}`, {data: title, description}, 
+      const { status } = await axiosInstance.put(`/todos/${todoEdit.id}`, {data: {title, description},}, 
       {headers: {
-        Authorization: `Bearer ${userData.jwt}`
-      }})
-      if(status == 200) {
+        Authorization: `Bearer ${userData.jwt}`,
+      },});
+      if(status === 200) {
         onCloseEditModal()
         setQueryVersion(prev => prev + 1)
       }
@@ -222,13 +222,13 @@ const TodoList = () => {
         </form>
       </Modal>
       {/* Edit todo Modal */}
-      <Modal isOpen={ isOpenEditModal } closeModal={ onCloseEditModal } title="Edit this todo" >
-        <form className="space-y-3" onSubmit={submitHandler}>
+      <Modal isOpen={ isEditModalOpen } closeModal={ onCloseEditModal } title="Edit this todo" >
+        <form className="space-y-3" onSubmit={onSubmitHandler}>
           <Input name="title" value={todoEdit.title} onChange={onChangeHandler}/>
           <Textarea name="description" value={todoEdit.description} onChange={onChangeHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
             <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Update</Button>
-            <Button variant={"cancel"} type="button">Cancel</Button>
+            <Button onClick={onCloseEditModal} variant={"cancel"} type="button">Cancel</Button>
           </div>
         </form>
       </Modal>
