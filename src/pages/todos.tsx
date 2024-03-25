@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Paginator from "../components/Paginator";
 import TodoSkeleton from "../components/TodoSkeleton";
 import useCustomQuery from "../hooks/useCustomQuery"
@@ -7,8 +8,9 @@ const TodosPage = () => {
   const userDataString = localStorage.getItem(storageKey)
   const userData = userDataString ? JSON.parse(userDataString) : null;
 
+  const [page, setPage] = useState<number>(1)
   const {data, isLoading} = useCustomQuery({
-    queryKey: ["paginatedTodos"],
+    queryKey: ["paginatedTodos", `${page}`],
     url:"/todos",
       config: {
         headers: {
@@ -18,6 +20,13 @@ const TodosPage = () => {
     }
   )  
 
+  const onClickPrev = ()=> {
+    setPage(prev => prev - 1)
+  }
+
+  const onClickNext = ()=> {
+    setPage(prev => prev + 1)
+  }
   if(isLoading) return (
     <div className="p-3 space-y-1">
       {Array.from({length: 25}, (_, index)=> (
@@ -37,7 +46,7 @@ const TodosPage = () => {
       ) : (
         <h3>No todos Yet!</h3> 
       )}
-      <Paginator />
+      <Paginator page={page} pageCount={3} onClickPrev={onClickPrev}onClickNext={onClickNext} />
     </div>
   )
 }
