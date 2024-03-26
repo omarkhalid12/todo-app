@@ -7,7 +7,7 @@ import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
 import TodoSkeleton from "./TodoSkeleton";
-import { faker } from '@faker-js/faker';
+import { onGenerateTodos } from "../utils/Function";
 
 const TodoList = () => {
 
@@ -67,7 +67,6 @@ const TodoList = () => {
     setTodoEdit(todo)
     setIsEditModalOpen(true)
   }
-
   const closeConfirmModal = ()=> {
     setTodoEdit({
       id: 0,
@@ -80,7 +79,6 @@ const TodoList = () => {
     setTodoEdit(todo)
     setIsOpenConfirmModal(true)
   }
-
   const onChangeAddTodoHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> {
     const {value, name} = event.target
 
@@ -97,23 +95,6 @@ const TodoList = () => {
       [name]: value
     })
   }
-
-  const onGenerateTodos = async()=> {
-    // 100 record
-    for (let i = 0; i < 100; i++) {
-      try {
-        await axiosInstance.post(`/todos`, 
-        {data: {title: faker.word.words(5), description: faker.lorem.paragraph(2), user: [userData.user.id] } }, 
-          {headers: {
-            Authorization: `Bearer ${userData.jwt}`
-          },
-        }
-      );
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
   const onSubmitRemoveTodo = async()=> {
     try {
       const { status } = await axiosInstance.delete(`/todos/${todoEdit.id}`, {
@@ -129,47 +110,58 @@ const TodoList = () => {
       console.log(error)
     }
   }
-
   const onSubmitAddTodo = async(event: FormEvent<HTMLFormElement>)=> {
     event.preventDefault()
 
     setIsUpdating(true)
 
-    const {title, description} = todoAdd
+    const {title, description} = todoAdd;
+
     try {
-      const { status } = await axiosInstance.post(`/todos}`, 
-      {data: title, description, user: [userData.user.id]}, 
-      {headers: {
-        Authorization: `Bearer ${userData.jwt}`
-      }})
-      if(status === 200) {
-        onCloseAddModal()
-        setQueryVersion(prev => prev + 1)
+      const { status } = await axiosInstance.post(
+        `/todos`,
+        { data: { title, description, user: [userData.user.id] } },
+        {
+          headers: {
+            Authorization: `Bearer ${userData.jwt}`,
+          },
+        }
+      );
+      if (status === 200) {
+        onCloseAddModal();
+        setQueryVersion(prev => prev + 1);
+
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
   }
-  const onSubmitHandler = async(event: FormEvent<HTMLFormElement>)=> {
+  const onSubmitUpdateHandler = async(event: FormEvent<HTMLFormElement>)=> {
     event.preventDefault()
     setIsUpdating(true)
     const {title, description} = todoEdit
 
     try {
-      const { status } = await axiosInstance.put(`/todos/${todoEdit.id}`, {data: {title, description},}, 
-      {headers: {
-        Authorization: `Bearer ${userData.jwt}`,
-      },});
-      if(status === 200) {
-        onCloseEditModal()
-        setQueryVersion(prev => prev + 1)
+      const { status } = await axiosInstance.put(
+        `/todos/${todoEdit.id}`,
+        { data: { title, description } },
+        {
+          headers: {
+            Authorization: `Bearer ${userData.jwt}`,
+          },
+        }
+      );
+
+      if (status === 200) {
+        onCloseEditModal();
+        setQueryVersion(prev => prev + 1);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
   }
 
@@ -220,14 +212,18 @@ const TodoList = () => {
           <Input name="title" value={todoAdd.title} onChange={onChangeAddTodoHandler}/>
           <Textarea name="description" value={todoAdd.description} onChange={onChangeAddTodoHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
-            <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>Done</Button>
-            <Button variant={"cancel"} onClick={onCloseAddModal} type="button">Cancel</Button>
+            <Button className="bg-indigo-700 hover:bg-indigo-800" isLoading={isUpdating}>
+              Done
+            </Button>
+            <Button variant={"cancel"} onClick={onCloseAddModal} type="button">
+              Cancel
+            </Button>
           </div>
         </form>
       </Modal>
       {/* Edit todo Modal */}
       <Modal isOpen={ isEditModalOpen } closeModal={ onCloseEditModal } title="Edit this todo" >
-        <form className="space-y-3" onSubmit={onSubmitHandler}>
+        <form className="space-y-3" onSubmit={onSubmitUpdateHandler}>
           <Input name="title" value={todoEdit.title} onChange={onChangeHandler}/>
           <Textarea name="description" value={todoEdit.description} onChange={onChangeHandler}/>
           <div className="flex mt-4 space-x-3 item-center">
@@ -254,6 +250,7 @@ const TodoList = () => {
           </Button>
         </div>
       </Modal>
+      
     </div>
   );
 };
