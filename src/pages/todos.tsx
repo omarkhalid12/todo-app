@@ -41,7 +41,28 @@ const TodosPage = () => {
   setSortBy(e.target.value)
   }
 
-  if(isLoading) return <h2>Loading ...</h2>
+if(isLoading) return (
+  <div className="space-y-10">
+    <div className="flex items-center justify-between max-w-2xl mx-auto">
+      <div>
+        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5" />
+      </div>
+      <div className="flex item-center space-x-2">
+        <div className="w-20 h-9 bg-gray-300 rounded-md dark:bg-gray-700"></div>
+        <div className="w-20 h-9 bg-gray-300 rounded-md dark:bg-gray-700"></div>
+      </div>
+    </div>
+    <div className="p-3 space-y-1 max-w-2xl mx-auto">
+      {Array.from({length: 15}, ()=> (
+        <div className="space-y-5">
+          <div className="h-5 bg-gray-300 rounded-full dark:bg-gray-600 w-50 mb-2.5" />
+        </div>
+      ))}
+    </div>
+  </div>
+  )
+
+  
   
 
   return (

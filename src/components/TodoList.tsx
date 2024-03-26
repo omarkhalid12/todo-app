@@ -175,7 +175,7 @@ const TodoList = () => {
 
   if(isLoading) return (
     <div className="p-3 space-y-1">
-      {Array.from({length: 3}, (_, index)=> (
+      {Array.from({length: 10}, (_, index)=> (
         <TodoSkeleton key={index} />
       ))}
     </div>
