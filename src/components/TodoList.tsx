@@ -8,6 +8,7 @@ import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
 import TodoSkeleton from "./TodoSkeleton";
 import { onGenerateTodos } from "../utils/Function";
+import toast, { Toaster } from "react-hot-toast"
 
 const TodoList = () => {
 
@@ -105,6 +106,14 @@ const TodoList = () => {
       if(status === 200) {
         closeConfirmModal()
         setQueryVersion(prev => prev + 1)
+        toast("Product has been deleted successfully!", {
+          duration: 5000,
+          icon: "👏",
+          style: {
+            backgroundColor: "#c2344d",
+            color: "white",
+          },
+        });
       }
     } catch (error) {
       console.log(error)
@@ -130,7 +139,9 @@ const TodoList = () => {
       if (status === 200) {
         onCloseAddModal();
         setQueryVersion(prev => prev + 1);
-
+        toast.success('Product has been added successfully!', {
+          duration: 3000
+        });
       }
     } catch (error) {
       console.log(error);
@@ -157,6 +168,9 @@ const TodoList = () => {
       if (status === 200) {
         onCloseEditModal();
         setQueryVersion(prev => prev + 1);
+        toast.success('Product has been update successfully!', {
+          duration: 3000
+        });
       }
     } catch (error) {
       console.log(error);
@@ -250,7 +264,7 @@ const TodoList = () => {
           </Button>
         </div>
       </Modal>
-      
+      <Toaster />
     </div>
   );
 };
