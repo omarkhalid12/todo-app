@@ -1,4 +1,4 @@
-<!-- # React + TypeScript + Vite
+# React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -38,7 +38,7 @@ If you are developing a production application, we recommend updating the config
 
 <img align="right" height="150" src="https://i.imgflip.com/65efzo.gif"  />
 
-### -->
+###
 
 <div align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="30" alt="javascript logo"  />
