@@ -12,7 +12,7 @@ export const REGISTER_FORM: IRegisterInput[] = [
   },
   {
     name: "email",
-    placeholder: "Email address",
+    placeholder: "Email",
     type: "email",
     validation: {
       required: true,
@@ -33,20 +33,20 @@ export const REGISTER_FORM: IRegisterInput[] = [
 export const LOGIN_FORM: ILoginInput[] = [
   {
     name: "identifier",
-    placeholder: "Email address",
+    placeholder: "Email",
     type: "email",
     validation: {
-      required: true, 
-      pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/
-    }
+      required: true,
+      pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+    },
   },
   {
     name: "password",
     placeholder: "Password",
     type: "password",
     validation: {
-      required: true, 
-      minLength: 6
-    }
-  }
-] 
+      required: true,
+      minLength: 6,
+    },
+  },
+];
