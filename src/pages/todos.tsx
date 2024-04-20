@@ -47,12 +47,12 @@ if(isLoading) return (
       <div>
         <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5" />
       </div>
-      <div className="flex item-center space-x-2">
-        <div className="w-20 h-9 bg-gray-300 rounded-md dark:bg-gray-700"></div>
-        <div className="w-20 h-9 bg-gray-300 rounded-md dark:bg-gray-700"></div>
+      <div className="flex space-x-2 item-center">
+        <div className="w-20 bg-gray-300 rounded-md h-9 dark:bg-gray-700"></div>
+        <div className="w-20 bg-gray-300 rounded-md h-9 dark:bg-gray-700"></div>
       </div>
     </div>
-    <div className="p-3 space-y-1 max-w-2xl mx-auto">
+    <div className="max-w-2xl p-3 mx-auto space-y-1">
       {Array.from({length: 15}, ()=> (
         <div className="space-y-5">
           <div className="h-5 bg-gray-300 rounded-full dark:bg-gray-600 w-50 mb-2.5" />
@@ -72,7 +72,7 @@ if(isLoading) return (
           title="Generate 100 Records">Generate Todos
         </Button>
         <div className="flex items-center justify-between space-x-2 text=md">
-          <select className="border-2 border-indigo-600 rounded-md p-2" value={sortBy} onChange={onChangeSortBy}>
+          <select className="p-2 border-2 border-indigo-600 rounded-md" value={sortBy} onChange={onChangeSortBy}>
             <option disabled>
               Sort By
             </option>
@@ -80,7 +80,7 @@ if(isLoading) return (
             <option value="DESC">Latest</option>
           </select>
 
-          <select className="border-2 border-indigo-600 rounded-md p-2" value={pageSize} onChange={onChangePageSize}>
+          <select className="p-2 border-2 border-indigo-600 rounded-md" value={pageSize} onChange={onChangePageSize}>
             <option disabled>Page Size</option>
             <option value={10}>10</option>
             <option value={50}>50</option>
@@ -110,4 +110,4 @@ if(isLoading) return (
   )
 }
 
-export default TodosPage
+export default TodosPage;
